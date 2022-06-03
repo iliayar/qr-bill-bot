@@ -109,15 +109,25 @@ async fn handle_qr_photo(message: Message, bot: AutoSend<Bot>, cfg: ConfigParame
     bot.send_message(message.chat.id, "Trying fetch bill...").await?;
 
     debug!("Decoding image");
-    let qr_photo = &message.photo().unwrap()[0];
-    let qr_path = format!("/tmp/bill_qr_bot_{}", qr_photo.file_unique_id);
+    let mut qr_photo = &message.photo().unwrap()[0];
+    let mut max_photo_size = qr_photo.width * qr_photo.height;
+
+    for photo in message.photo().unwrap() {
+	let photo_size = photo.height * photo.width;
+	if photo_size > max_photo_size {
+	    max_photo_size = photo_size;
+	    qr_photo = photo;
+	}
+    }
+
+    let qr_path = format!("/tmp/bill_qr_bot_{}.jpg", qr_photo.file_unique_id);
 
     let teloxide::types::File { file_path, .. } = bot.get_file(qr_photo.file_id.to_string()).send().await?;
-    let mut qr_file = File::create(qr_path).await?;
+    let mut qr_file = File::create(&qr_path).await?;
 
     bot.download_file(&file_path, &mut qr_file).await?;
 
-    match qr_decode::decode_qr("tests/data/test2.jpg") {
+    match qr_decode::decode_qr(&qr_path) {
 	Ok(content) => {
 	    debug!("Decoded QR content: {}", content);
 	    fetch_bill(&content, message.chat.id, bot, cfg).await?;

@@ -1,4 +1,5 @@
 use log::{debug, error, info};
+use std::env;
 
 mod qr_decode;
 mod fns;
@@ -12,16 +13,16 @@ async fn main() {
 	.init().unwrap();
 
     let fns_settings = fns::FnsSettings {
-        host: env!("FNS_HOST").to_string(),
-	inn: env!("FNS_INN").to_string(),
-        password: env!("FNS_PASSWORD").to_string(),
-        client_secret: env!("FNS_CLIENT_SECRET").to_string(),
-        device_id: env!("FNS_DEVICE_ID").to_string(),
+        host: env::var("FNS_HOST").expect("FNS_HOST net set"),
+	inn: env::var("FNS_INN").expect("FNS_INN not set"),
+        password: env::var("FNS_PASSWORD").expect("FNS_PASSWORD not set"),
+        client_secret: env::var("FNS_CLIENT_SECRET").expect("FNS_CLIENT_SECRET not set"),
+        device_id: env::var("FNS_DEVICE_ID").expect("FNS_DEVICE_ID not set"),
         device_os: "Linux".to_owned(),
     };
 
     let bot_settings = bot::BotSettings {
-	token: env!("BOT_TOKEN").to_string(),
+	token: env::var("BOT_TOKEN").expect("BOT_TOKEN not set"),
     };
 
     bot::run_bot(bot_settings, fns_settings).await;
