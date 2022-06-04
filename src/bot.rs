@@ -154,7 +154,7 @@ async fn fetch_bill(query: &str, chat_id: ChatId, bot: AutoSend<Bot>, cfg: Confi
     debug!("Fetchin bill for query: {}", query);
     if let Ok(bill) = fns::fetch_bill_info(cfg.fns_settings, query).await {
 	info!("Fetched bill: {:?}", bill);
-	bot.send_message(chat_id, show_bill(bill)).parse_mode(ParseMode::MarkdownV2).await
+	bot.send_message(chat_id, show_bill(bill)).parse_mode(ParseMode::Html).await
     } else {
 	bot.send_message(chat_id, "Could not fetch bill").await
     }.map_err(BotError::from).map(|_| ())
@@ -163,10 +163,10 @@ async fn fetch_bill(query: &str, chat_id: ChatId, bot: AutoSend<Bot>, cfg: Confi
 fn show_bill(bill: fns::Bill) -> String {
     let mut res = String::new();
     for item in bill.records {
-	res.push_str(&format!("*{}* \\- x{} \\- `{:.2}` \\\n", item.name, item.quantity, (item.price as f64) / 100.));
+	res.push_str(&format!("<b>{}</b> - x{} - <code>{:.2}</code>\n", item.name, item.quantity, (item.price as f64) / 100.));
     }
 
-    res.push_str(&format!("\nTotal: `{:.2}`", (bill.total as f64) / 100.));
+    res.push_str(&format!("\nTotal: <code>{:.2}</code>", (bill.total as f64) / 100.));
 
     return res;
 }
