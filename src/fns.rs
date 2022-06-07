@@ -41,7 +41,7 @@ pub struct Bill {
 #[derive(Debug)]
 pub struct BillRecord {
     pub name: String,
-    pub quantity: usize,
+    pub quantity: f64,
     pub price: u64,
 }
 
@@ -60,7 +60,7 @@ impl Bill {
 }
 
 impl BillRecord {
-    pub fn new(name: String, quantity: usize, price: u64) -> Self {
+    pub fn new(name: String, quantity: f64, price: u64) -> Self {
 	Self {
 	    name,
 	    quantity,
@@ -247,6 +247,6 @@ struct BillFetchResponseTicketDocumentReceiptItem {
     price: u64,
     #[serde(rename = "productType")]
     product_type: i64,
-    quantity: usize,
+    quantity: f64,
     sum: u64,
 }
