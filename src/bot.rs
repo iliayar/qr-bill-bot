@@ -135,7 +135,7 @@ async fn handle_qr_photo(message: Message, bot: AutoSend<Bot>, cfg: ConfigParame
 	Err(err) => {
 	    error!("Could not read qr: {}", err);
 
-	    bot.send_message(message.chat.id, format!("Could not decode QR: {}", err.to_string())).await?;
+	    bot.send_message(message.chat.id, format!("Could not decode QR")).await?;
 	},
     };
 
@@ -152,11 +152,15 @@ async fn handle_qr_query(message: Message, bot: AutoSend<Bot>, cfg: ConfigParame
 
 async fn fetch_bill(query: &str, chat_id: ChatId, bot: AutoSend<Bot>, cfg: ConfigParameters) -> Result<(), BotError> {
     debug!("Fetchin bill for query: {}", query);
-    if let Ok(bill) = fns::fetch_bill_info(cfg.fns_settings, query).await {
-	info!("Fetched bill: {:?}", bill);
-	bot.send_message(chat_id, show_bill(bill)).parse_mode(ParseMode::Html).await
-    } else {
-	bot.send_message(chat_id, "Could not fetch bill").await
+    match fns::fetch_bill_info(cfg.fns_settings, query).await {
+        Ok(bill) => {
+            info!("Fetched bill: {:?}", bill);
+            bot.send_message(chat_id, show_bill(bill)).parse_mode(ParseMode::Html).await
+        },
+        Err(err) => {
+            error!("Failed to fetch bill: {}", err);
+            bot.send_message(chat_id, "Could not fetch bill").await
+        },
     }.map_err(BotError::from).map(|_| ())
 }
 
