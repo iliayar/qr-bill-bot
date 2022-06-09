@@ -35,7 +35,7 @@ impl From<reqwest::Error> for FnsApiError {
 #[derive(Debug)]
 pub struct Bill {
     pub records: Vec<BillRecord>,
-    pub total: u64,
+    pub total: f64,
 }
 
 #[derive(Debug)]
@@ -49,12 +49,12 @@ impl Bill {
     pub fn new() -> Self {
 	Self {
 	    records: Vec::new(),
-	    total: 0u64,
+	    total: 0f64,
 	}
     }
 
     pub fn add_record(&mut self, record: BillRecord) {
-	self.total += record.price * (record.quantity as u64);
+	self.total += (record.price as f64) * record.quantity;
 	self.records.push(record);
     }
 }

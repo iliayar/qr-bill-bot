@@ -170,7 +170,7 @@ fn show_bill(bill: fns::Bill) -> String {
 	res.push_str(&format!("<b>{}</b> - x{} - <code>{:.2}</code>\n", item.name, item.quantity, (item.price as f64) / 100.));
     }
 
-    res.push_str(&format!("\nTotal: <code>{:.2}</code>", (bill.total as f64) / 100.));
+    res.push_str(&format!("\nTotal: <code>{:.2}</code>", bill.total / 100.));
 
     return res;
 }
