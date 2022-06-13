@@ -241,7 +241,7 @@ struct BillFetchResponseTicketDocumentReceiptItem {
     name: String,
     nds: i64,
     #[serde(rename = "ndsSum")]
-    nds_sum: i64,
+    nds_sum: Option<i64>,
     #[serde(rename = "paymentType")]
     payment_type: i64,
     price: u64,
