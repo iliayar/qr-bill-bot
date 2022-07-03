@@ -3,6 +3,7 @@ use core::fmt;
 use log::{info, error};
 use rqrr;
 use image::{self, ImageError};
+use std::{fs, io::BufReader};
 
 #[derive(Debug)]
 pub enum QrDecodeError {
@@ -29,8 +30,19 @@ impl From<ImageError> for QrDecodeError {
     }
 }
 
+impl From<std::io::Error> for QrDecodeError {
+    fn from(err: std::io::Error) -> Self {
+	Self::IOError(err.to_string())
+    }
+}
+
 pub fn decode_qr(path: impl AsRef<str>) -> Result<String, QrDecodeError> {
-    let img = image::open(path.as_ref())?.to_luma8();
+    let img = image::io::Reader::new(
+	BufReader::new(
+	    fs::File::open(path.as_ref())?
+	)
+    ).with_guessed_format()?.decode()?.to_luma8();
+
     let mut img = rqrr::PreparedImage::prepare(img);
     info!("Image read");
 

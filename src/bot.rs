@@ -120,7 +120,7 @@ async fn handle_qr_photo(message: Message, bot: AutoSend<Bot>, cfg: ConfigParame
 	}
     }
 
-    let qr_path = format!("/tmp/bill_qr_bot_{}.jpg", qr_photo.file_unique_id);
+    let qr_path = format!("/tmp/bill_qr_bot_{}", qr_photo.file_unique_id);
 
     let teloxide::types::File { file_path, .. } = bot.get_file(qr_photo.file_id.to_string()).send().await?;
     let mut qr_file = File::create(&qr_path).await?;
@@ -151,7 +151,7 @@ async fn handle_qr_query(message: Message, bot: AutoSend<Bot>, cfg: ConfigParame
 }
 
 async fn fetch_bill(query: &str, chat_id: ChatId, bot: AutoSend<Bot>, cfg: ConfigParameters) -> Result<(), BotError> {
-    debug!("Fetchin bill for query: {}", query);
+    debug!("Fetching bill for query: {}", query);
     match fns::fetch_bill_info(cfg.fns_settings, query).await {
         Ok(bill) => {
             info!("Fetched bill: {:?}", bill);

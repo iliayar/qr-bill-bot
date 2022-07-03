@@ -1,9 +1,12 @@
+#[macro_use] extern crate rocket;
+
 use log::{debug, error, info};
 use std::env;
 
 mod qr_decode;
 mod fns;
 mod bot;
+mod api;
 
 #[tokio::main]
 async fn main() {
@@ -25,5 +28,8 @@ async fn main() {
 	token: env::var("BOT_TOKEN").expect("BOT_TOKEN not set"),
     };
 
-    bot::run_bot(bot_settings, fns_settings).await;
+    tokio::join!(
+	bot::run_bot(bot_settings, fns_settings.clone()),
+	api::launch(fns_settings),
+    );
 }

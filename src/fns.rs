@@ -33,12 +33,14 @@ impl From<reqwest::Error> for FnsApiError {
 
 
 #[derive(Debug)]
+#[derive(Serialize)]
 pub struct Bill {
     pub records: Vec<BillRecord>,
     pub total: f64,
 }
 
 #[derive(Debug)]
+#[derive(Serialize)]
 pub struct BillRecord {
     pub name: String,
     pub quantity: f64,

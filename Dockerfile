@@ -17,5 +17,6 @@ RUN cargo build --release
 FROM rust:1.61-slim-buster
 
 COPY --from=build /qr-bill-bot/target/release/qr-bill-bot .
+COPY Rocket.toml .
 
 CMD ["./qr-bill-bot"]
